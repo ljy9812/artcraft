@@ -94,12 +94,43 @@ use tauri_plugin_http;
 use tauri_plugin_log::Target;
 use tauri_plugin_log::TargetKind;
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
+// NB: OHOS fork 规则（dev-guide §1.3）：ohos 面须并入 mobile_entry_point 展开条件，
+// 否则 desktop 形态宏不展开。
+#[cfg_attr(any(mobile, target_env = "ohos"), tauri::mobile_entry_point)]
 pub fn run() {
+  #[cfg(target_env = "ohos")]
+  {
+    // OHOS app 进程不接管 Rust stdout/stderr：println! 与 panic 消息默认全部丢失。
+    // 在任何启动逻辑之前把两条流转发进 hilog（tag: RustStdoutStderr），真机诊断
+    // 全靠这条通道（白屏期 Cpp Crash 的 panic 消息即由它打捞）。
+    let _ = ohos_hilog_binding::forward_stdio_to_hilog();
+  }
   // NB: Tauri wants to install the logger itself, so we can't rely on the logger crate
   // until the tauri runtime begins.
   println!("Loading config...");
-  let app_data_root = AppDataRoot::create_default().expect("data directory should be created");
+  let app_data_root = {
+    #[cfg(target_env = "ohos")]
+    {
+      // OHOS 沙箱进程无 $HOME（directories::UserDirs::new() 返回 None，
+      // create_default 的 expect 即启动期 SIGABRT 的根因）。改用 Ability 的
+      // filesDir——此刻 tauri::ohos::APP 已由 entry_point 装填（Builder::build
+      // 早于此发生），与 tauri path resolver 的 app_data_dir 同源。
+      let files_dir = tauri::ohos::APP
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clone()
+        .and_then(|app| app.base_path())
+        .filter(|p| !p.is_empty())
+        .expect("OHOS: Ability filesDir (base_path) unavailable at app start");
+      println!("OHOS filesDir base: {}", files_dir);
+      AppDataRoot::create_existing(std::path::Path::new(&files_dir).join("artcraft"))
+        .expect("data directory should be created")
+    }
+    #[cfg(not(target_env = "ohos"))]
+    {
+      AppDataRoot::create_default().expect("data directory should be created")
+    }
+  };
   let app_data_root_2 = app_data_root.clone();
 
   println!("Getting platform info...");

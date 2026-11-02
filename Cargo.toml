@@ -107,7 +107,7 @@ serde_json = "1.0.149"
 sha2 = "0.11.0-rc.5"
 sha3 = "0.10.8"
 strum = { version = "0.28.0", features = ["derive"] }
-tauri = { version = "2.11.2", features = ["unstable", "devtools", "protocol-asset"] } # NB: "devtools" prevents App Store distribution; "ubstable" is needed for window access
+tauri = { version = "2.10.3", features = ["unstable", "devtools", "protocol-asset"] } # NB: 2.11.2→2.10.3 对齐本地 OHOS fork（D:\xuqiu\tauri-3.0），仅穿刺用
 tauri-plugin-dialog = "2.7.1"
 tauri-plugin-fs = "2.5.1"
 tauri-plugin-log = "2.8.0"
@@ -127,3 +127,25 @@ walkdir = "2.4.0"
 # Windows: choco install cmake strawberryperl pkgconfiglite llvm nasm
 wreq-util = "3.0.0-rc.10"
 wreq = { version = "6.0.0-rc.28", features = ["json", "query", "form", "multipart", "cookies", "ws", "stream", "gzip", "brotli", "zstd", "deflate"] }
+
+# ── OHOS Tauri fork 本地穿刺挂载（D:\xuqiu\tauri-3.0，Eulogizethesun 系十仓）──
+# 版本要求已同步下调至 fork 实值，否则 [patch] 版本满足性校验直接拒绝：
+#   tauri 2.11.2→2.10.3 / tauri-build 2.6.2→2.5.6 / vendored http 的 tauri-plugin 2.6.2→2.5.4
+# tauri-plugin-http 用本仓 vendor 副本（私有 cookie API 改动），不 patch。
+[patch.crates-io]
+tauri = { path = "../../tauri-3.0/tauri/crates/tauri" }
+tauri-build = { path = "../../tauri-3.0/tauri/crates/tauri-build" }
+tauri-utils = { path = "../../tauri-3.0/tauri/crates/tauri-utils" }
+tauri-plugin = { path = "../../tauri-3.0/tauri/crates/tauri-plugin" }
+wry = { path = "../../tauri-3.0/wry" }
+tao = { path = "../../tauri-3.0/tao" }
+muda = { path = "../../tauri-3.0/muda" }
+tray-icon = { path = "../../tauri-3.0/tray-icon" }
+window-vibrancy = { path = "../../tauri-3.0/window-vibrancy" }
+openharmony-ability = { path = "../../tauri-3.0/openharmony-ability/crates/ability" }
+openharmony-ability-derive = { path = "../../tauri-3.0/openharmony-ability/crates/derive" }
+tauri-plugin-dialog = { path = "../../tauri-3.0/plugins-workspace/plugins/dialog" }
+tauri-plugin-fs = { path = "../../tauri-3.0/plugins-workspace/plugins/fs" }
+tauri-plugin-log = { path = "../../tauri-3.0/plugins-workspace/plugins/log" }
+tauri-plugin-upload = { path = "../../tauri-3.0/plugins-workspace/plugins/upload" }
+tauri-plugin-opener = { path = "../../tauri-3.0/plugins-workspace/plugins/opener" }

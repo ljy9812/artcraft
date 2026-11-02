@@ -105,3 +105,7 @@ windows/sqlite/sqlite3.lib
 crates/desktop/src-tauri/*.dll
 windows_dlls/
 
+
+# OHOS Tauri adaptation (ohos-tauri branch)
+crates/desktop/artcraft/gen/
+crates/desktop/artcraft/tauri.ohos.conf.local.json

@@ -27,7 +27,7 @@ ios = { level = "full", notes = "" }
 
 [build-dependencies]
 #tauri-plugin = { workspace = true, features = ["build"] }
-tauri-plugin = { version = "2.6.2", features = ["build"] }
+tauri-plugin = { version = "2.5.4", features = ["build"] } # NB: 2.6.2→2.5.4 对齐本地 OHOS fork，仅穿刺用
 #schemars = { workspace = true }
 schemars = { version = "0.8" }
 serde = { workspace = true }

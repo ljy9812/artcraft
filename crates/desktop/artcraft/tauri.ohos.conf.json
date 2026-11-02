@@ -1,0 +1,6 @@
+{
+  "identifier": "com.egui.device-spike",
+  "build": {
+    "beforeBuildCommand": ""
+  }
+}

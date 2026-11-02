@@ -262,6 +262,8 @@ async fn get_customer_portal_update_payment_method_url(
   Ok(Url::parse(&result.stripe_portal_url)?)
 }
 
+use crate::core::ohos_compat::DesktopOnlyBuilderCompat; // mobile/ohos 面 always_on_top 垫片
+
 async fn do_open_window(
   app: &AppHandle,
   app_data_root: &AppDataRoot,

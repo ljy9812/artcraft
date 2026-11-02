@@ -1,5 +1,6 @@
 use crate::core::windows::main_window::constants::MAIN_WINDOW_NAME;
 use errors::AnyhowResult;
+use crate::core::ohos_compat::DesktopOnlyBuilderCompat; // mobile/ohos 面 fullscreen 垫片
 use tauri::window::Color;
 use tauri::{AppHandle, TitleBarStyle, WebviewUrl, WebviewWindowBuilder};
 

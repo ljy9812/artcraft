@@ -64,6 +64,7 @@ pub async fn handle_request(
   info!("Revealing item in directory: {:?}", download_directory);
 
   app.opener().reveal_item_in_dir(download_directory)
+      .await // NB: fork opener 2.5.4 该方法为 async（上游 2.6 起同步）
       .map_err(|err| anyhow!("Failed to open directory: {:?}", err))?;
 
   Ok(())
