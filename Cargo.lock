@@ -2659,16 +2659,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "env_filter"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "900d271a03799a1ee8d1ca9b19893b48ca674a9284fefcfb85f05e74ed314217"
-dependencies = [
- "log",
- "regex",
-]
-
-[[package]]
 name = "env_logger"
 version = "0.11.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3856,27 +3846,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
-name = "hilog"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ee4eff4b693998eaeb1b5112f4d8bee530bac1559c1a534a9fe202539d77a4c"
-dependencies = [
- "arc-swap",
- "env_filter 2.0.0",
- "hilog-sys",
- "log",
-]
-
-[[package]]
-name = "hilog-sys"
-version = "0.1.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58fae17a73157527ed7264c6dee436e002d328337c82e963721d49bcdcc46c2b"
-dependencies = [
- "log",
-]
-
-[[package]]
 name = "hkdf"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4085,7 +4054,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.5.10",
+ "socket2 0.6.2",
  "system-configuration",
  "tokio",
  "tower-service",
@@ -5148,6 +5117,7 @@ checksum = "dce6dd36094cac388f119d2e9dc82dc730ef91c32a6222170d630e5414b956e6"
 [[package]]
 name = "muda"
 version = "0.19.1"
+source = "git+https://github.com/Eulogizethesun/muda?branch=ohdev-git#7435fa56edc75eb8b379c1594460bbee7d91b71a"
 dependencies = [
  "base64 0.22.1",
  "crossbeam-channel",
@@ -6170,6 +6140,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "crossbeam-channel",
  "futures-channel",
@@ -6194,6 +6165,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-derive"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6203,6 +6175,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-plugin-app-control"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "napi-derive-ohos",
  "napi-ohos",
@@ -6212,6 +6185,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-plugin-menu"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "crossbeam-channel",
  "napi-derive-ohos",
@@ -6224,6 +6198,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-plugin-statusbar"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "crossbeam-channel",
  "napi-derive-ohos",
@@ -6236,6 +6211,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-plugin-url"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "napi-derive-ohos",
  "napi-ohos",
@@ -6245,6 +6221,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-plugin-webview"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "crossbeam-channel",
  "http",
@@ -6258,6 +6235,7 @@ dependencies = [
 [[package]]
 name = "openharmony-ability-plugin-window"
 version = "1.0.0-beta.0"
+source = "git+https://github.com/Eulogizethesun/openharmony-ability?branch=ohdev-git#cdd3ef67fad2c0ff6d20ef8f72494d2ead462cd2"
 dependencies = [
  "napi-derive-ohos",
  "napi-ohos",
@@ -7020,7 +6998,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash 2.1.1",
  "rustls 0.23.36",
- "socket2 0.5.10",
+ "socket2 0.6.2",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -9149,6 +9127,7 @@ dependencies = [
 [[package]]
 name = "tao"
 version = "0.35.0"
+source = "git+https://github.com/Eulogizethesun/tao?branch=ohdev-git#4c4f307545ecfe96ee598d736e1c860edb0c4fe3"
 dependencies = [
  "bitflags 2.13.2",
  "block2 0.6.2",
@@ -9179,7 +9158,7 @@ dependencies = [
  "parking_lot",
  "percent-encoding",
  "raw-window-handle",
- "tao-macros 0.1.3",
+ "tao-macros 0.1.3 (git+https://github.com/Eulogizethesun/tao?branch=ohdev-git)",
  "tokio",
  "unicode-segmentation",
  "url",
@@ -9192,6 +9171,8 @@ dependencies = [
 [[package]]
 name = "tao-macros"
 version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4e16beb8b2ac17db28eab8bca40e62dbfbb34c0fcdc6d9826b11b7b5d047dfd"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -9201,8 +9182,7 @@ dependencies = [
 [[package]]
 name = "tao-macros"
 version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4e16beb8b2ac17db28eab8bca40e62dbfbb34c0fcdc6d9826b11b7b5d047dfd"
+source = "git+https://github.com/Eulogizethesun/tao?branch=ohdev-git#4c4f307545ecfe96ee598d736e1c860edb0c4fe3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -9224,9 +9204,9 @@ checksum = "e1fc403891a21bcfb7c37834ba66a547a8f402146eba7265b5a6d88059c9ff2f"
 [[package]]
 name = "tauri"
 version = "2.10.3"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "anyhow",
- "base64 0.22.1",
  "bytes",
  "cookie",
  "dirs",
@@ -9253,7 +9233,6 @@ dependencies = [
  "objc2-web-kit",
  "openharmony-ability",
  "openharmony-ability-derive",
- "openharmony-ability-plugin-app-control",
  "openharmony-ability-plugin-menu",
  "percent-encoding",
  "plist",
@@ -9283,6 +9262,7 @@ dependencies = [
 [[package]]
 name = "tauri-build"
 version = "2.5.6"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "anyhow",
  "cargo_toml",
@@ -9303,6 +9283,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "2.5.5"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "base64 0.22.1",
  "brotli",
@@ -9328,6 +9309,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "2.5.5"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "heck 0.5.0",
  "proc-macro2",
@@ -9340,6 +9322,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin"
 version = "2.5.4"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "anyhow",
  "glob",
@@ -9355,6 +9338,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-dialog"
 version = "2.7.1"
+source = "git+https://github.com/Eulogizethesun/plugins-workspace?branch=ohdev-git#01e2063481476592cb112252ce4175db58042d42"
 dependencies = [
  "log",
  "raw-window-handle",
@@ -9371,6 +9355,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-fs"
 version = "2.5.1"
+source = "git+https://github.com/Eulogizethesun/plugins-workspace?branch=ohdev-git#01e2063481476592cb112252ce4175db58042d42"
 dependencies = [
  "anyhow",
  "dunce",
@@ -9417,11 +9402,11 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-log"
 version = "2.8.0"
+source = "git+https://github.com/Eulogizethesun/plugins-workspace?branch=ohdev-git#01e2063481476592cb112252ce4175db58042d42"
 dependencies = [
  "android_logger",
  "byte-unit",
  "fern",
- "hilog",
  "log",
  "objc2 0.6.4",
  "objc2-foundation 0.3.2",
@@ -9438,6 +9423,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-opener"
 version = "2.5.4"
+source = "git+https://github.com/Eulogizethesun/plugins-workspace?branch=ohdev-git#01e2063481476592cb112252ce4175db58042d42"
 dependencies = [
  "dunce",
  "glob",
@@ -9459,6 +9445,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-upload"
 version = "2.4.0"
+source = "git+https://github.com/Eulogizethesun/plugins-workspace?branch=ohdev-git#01e2063481476592cb112252ce4175db58042d42"
 dependencies = [
  "futures-util",
  "log",
@@ -9476,6 +9463,7 @@ dependencies = [
 [[package]]
 name = "tauri-runtime"
 version = "2.10.1"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "cookie",
  "dpi",
@@ -9500,7 +9488,9 @@ dependencies = [
 [[package]]
 name = "tauri-runtime-wry"
 version = "2.10.1"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
+ "futures-executor",
  "gtk",
  "http",
  "jni 0.21.1",
@@ -9528,6 +9518,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "2.8.3"
+source = "git+https://github.com/Eulogizethesun/tauri?branch=ohdev-git#46a19d8d6d4f7ecdd0a99b73a4d8ea2cedd2d0e8"
 dependencies = [
  "anyhow",
  "brotli",
@@ -10085,6 +10076,7 @@ dependencies = [
 [[package]]
 name = "tray-icon"
 version = "0.24.0"
+source = "git+https://github.com/Eulogizethesun/tray-icon?branch=ohdev-git#90b85268b4fdc78d3c7113ee35e30569142167e3"
 dependencies = [
  "base64 0.22.1",
  "crossbeam-channel",
@@ -11265,6 +11257,7 @@ dependencies = [
 [[package]]
 name = "window-vibrancy"
 version = "0.7.1"
+source = "git+https://github.com/Eulogizethesun/window-vibrancy?branch=ohdev-git#0f6c6b0ec57e6667e4ad05bbcd747dfa18e6277d"
 dependencies = [
  "futures-executor",
  "log",
@@ -12140,6 +12133,7 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "wry"
 version = "0.55.0"
+source = "git+https://github.com/Eulogizethesun/wry?branch=ohdev-git#f16fc676d33204da9bae3f58dc973a283c6213e2"
 dependencies = [
  "base64 0.22.1",
  "block2 0.6.2",

@@ -63,9 +63,13 @@ pub async fn handle_request(
 
   info!("Revealing item in directory: {:?}", download_directory);
 
-  app.opener().reveal_item_in_dir(download_directory)
-      .await // NB: fork opener 2.5.4 该方法为 async（上游 2.6 起同步）
-      .map_err(|err| anyhow!("Failed to open directory: {:?}", err))?;
+  // NB: fork 的 opener `reveal_item_in_dir` 按 target_env 分面——ohos 面 async
+  // （走 openharmony-ability bridge），桌面面同步——两面都要编译，按面拆分。
+  #[cfg(target_env = "ohos")]
+  let revealed = app.opener().reveal_item_in_dir(download_directory).await;
+  #[cfg(not(target_env = "ohos"))]
+  let revealed = app.opener().reveal_item_in_dir(download_directory);
+  revealed.map_err(|err| anyhow!("Failed to open directory: {:?}", err))?;
 
   Ok(())
 }

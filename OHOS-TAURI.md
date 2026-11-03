@@ -11,14 +11,26 @@ artcraft（Tauri 应用，`crates/desktop/artcraft`）在 OpenHarmony 真机（H
 
 | 依赖 | 说明 |
 |---|---|
-| Tauri OHOS fork | 兄弟团队仓，需 checkout 到 `../../tauri-3.0`（相对本仓根），**只消费不修改**。根 `Cargo.toml` 的 `[patch.crates-io]` 14 条 path 重定向已按此相对路径写死 |
+| Tauri OHOS fork | 兄弟团队仓（GitHub `Eulogizethesun` 系十仓，外发分支统一 `ohdev-git`），**只消费不修改**。根 `Cargo.toml` 的 `[patch.crates-io]` 16 条 git 重定向——cargo 自动拉取，**无需本地 tauri 源码树**。内部提速备选：换回 path 指向 `../../tauri-3.0` checkout（版本面与 ohdev-git 分支完全一致） |
+| tauri-cli（OHOS 版） | `cargo install --git https://github.com/Eulogizethesun/tauri --branch ohdev-git --locked tauri-cli`（crates.io 发行版无 OHOS 支持） |
+| ohrs | `cargo install ohrs --version 1.3.1`（tauri-cli 内部调用它编 `.so`） |
 | DevEco Studio | 取 SDK clang（`CC/CXX_aarch64_unknown_linux_ohos`）与 NDK `libc++_shared.so` |
 | OHOS 签名物料 | DevEco auto-sign 产出的 p12/cer/p7b + 解出的口令（本机 `.ohos/config/`，不入库） |
 
 ## 本分支的源码改动（全量）
 
-1. **依赖挂载**（根 `Cargo.toml` + `Cargo.lock`）：`[patch.crates-io]` → fork；
-   版本对齐 fork 实值（tauri 2.11.2→2.10.3 / tauri-build 2.6.2→2.5.6 / tauri-plugin 2.6.2→2.5.4）。
+1. **依赖挂载**（根 `Cargo.toml` + `Cargo.lock`）：`[patch.crates-io]` 16 条 → fork 的
+   `ohdev-git` 分支（git 依赖，无需本地 tauri 树；artcraftx 仓已以同形态真机端到端验证，
+   版本面对齐——两仓 fork 实值相同）。版本对齐 fork 实值
+   （tauri 2.11.2→2.10.3 / tauri-build 2.6.2→2.5.6 / tauri-plugin 2.6.2→2.5.4）。
+   锁 source 形态切换用 `cargo fetch`（`cargo update -p` 在 patch source 变更后报
+   "did not match any packages"）；patch 生效判据 =
+   `grep -c '^\[\[patch.unused\]\]' Cargo.lock` 为 0。
+1a. **dialog 插件 HAR 入仓**（`crates/desktop/artcraft/plugins/dialog/openharmony/`，6 文件）：
+   tauri-cli 找插件 OHOS HAR 只认 `<project_dir>/plugins/<name>/openharmony`（本方案）、
+   plugins-workspace 兄弟目录上溯、`TAURI_WORKSPACE_ROOT` 三处——git 依赖模式下后两处
+   不存在，dialog HAR 拷入仓内即自动发现（fs/log/upload/opener 无 OHOS HAR，Warn 跳过
+   属预期）。
 2. **入口条件**（`src/lib.rs`）：`cfg_attr` 加 `target_env = "ohos"`——OHOS 上
    `cfg(mobile)` 恒 false，不并入则 `mobile_entry_point` 不展开。
 3. **OHOS 数据根**（`src/lib.rs` `run()`）：`AppDataRoot` 不再走 `UserDirs`（OHOS
@@ -32,6 +44,12 @@ artcraft（Tauri 应用，`crates/desktop/artcraft`）在 OpenHarmony 真机（H
    方法提供 ohos 面空操作；desktop 面零影响。
 6. **ohos deps**（`crates/desktop/artcraft/Cargo.toml`）：`openharmony-ability` /
    `napi-ohos` / `napi-derive-ohos`（入口宏展开会引用，app 侧必须自带）。
+   **坑**：`[target.'cfg(target_env = "ohos")'.dependencies]` 段必须放在文件里
+   **vendor 两行（`tauri-plugin-http` / `tauri-plugin-opener`）之后**——TOML 靠表头分段，
+   注释和空行不结束上一段；插在其前会把这两条 upstream 无条件依赖吞进 ohos 专属段，
+   host/desktop 构建面直接损坏（依赖不在图里 → capabilities 引用的 `http:*` / `opener:*`
+   权限解析不到 → app build.rs 报 "Permission http:allow-fetch not found"）。OHOS 面恰好
+   不触发（cfg 匹配），属「只在对照平台显形」型回归。
 7. **vendor 对齐**（`crates/vendor/tauri-plugin-http`）：版本对齐 + 权限文件重生成。
 8. `tauri.ohos.conf.json`：identifier（真机判据用单槽 bundleName）+ 空
    `beforeBuildCommand`。
@@ -44,7 +62,6 @@ cd crates/desktop/artcraft
 CI=true SQLX_OFFLINE=true CMAKE_GENERATOR=Ninja BORING_BSSL_RUST_CPPLIB=c++ \
 CC_aarch64_unknown_linux_ohos="<SDK>/llvm/bin/clang.exe" \
 CXX_aarch64_unknown_linux_ohos="<SDK>/llvm/bin/clang++.exe" \
-TAURI_WORKSPACE_ROOT="<tauri-3.0 绝对路径>" \
 OHOS_KEYSTORE_FILE=<p12> OHOS_KEYSTORE_PASSWORD=<口令> \
 OHOS_KEY_ALIAS=<别名> OHOS_KEY_PASSWORD=<口令> \
 OHOS_APP_CERT_FILE=<cer> OHOS_PROFILE_FILE=<p7b> \
