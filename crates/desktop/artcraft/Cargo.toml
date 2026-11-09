@@ -94,6 +94,7 @@ napi-derive-ohos = "1"
 # redirect 特性把两条流 dup2 进 hilog（tag RustStdoutStderr），启动链与 panic
 # 信息由此可观测。与 openharmony-ability 所引同版本 0.2.x，无重复编译。
 ohos-hilog-binding = { version = "0.2", features = ["redirect"] }
+log = "0.4"
 
 # # Transparent title bar on MacOS
 # # NB: See the notes here:

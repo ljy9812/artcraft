@@ -9,8 +9,8 @@ Tauri 线应用无预构建鸿蒙包，需从源码构建。两应用流程同�
 | §6 bindgen 三 `-isystem` | 可省 | **必设** |
 | 首启日志判据 | §9 左 | §9 右 |
 
-> Windows 11 + DevEco Studio 5.x 验证。技术细节见各仓根 `OHOS-TAURI.md`。
-> artcraft 仓的 `artcraft-native/` 不在本指南范围。
+> Windows 11 + DevEco Studio 5.x 验证（2026-11-09，fork `ohdev-git` @ `73bffac6f`）。
+> 技术细节见各仓根 `OHOS-TAURI.md`。artcraft 仓的 `artcraft-native/` 不在本指南范围。
 
 ## 1. 环境（一次性）
 
@@ -24,7 +24,9 @@ node --version   # ≥ 20
 ```
 
 tauri-cli 必须装 git 版（crates.io 版无 OHOS 支持）。核验：`cargo install --list`
-来源为 `Eulogizethesun/tauri`。fork 模板更新后重装。
+来源为 `Eulogizethesun/tauri`。**fork 分支更新后必须重装**——安装的是二进制内嵌
+的模板快照，旧 CLI 会把旧模板（断链 ability.har、多 READ_PASTEBOARD 权限）打进
+新工程。
 
 ## 2. 获取代码
 
@@ -56,14 +58,23 @@ cargo tauri ohos init --ci
 ## 5. init 后手工修正（每次 init 重打）
 
 ```bash
-# 5.1 注入 libc++_shared.so（缺 = 白屏）
-mkdir -p gen/ohos/tauri/libs/arm64-v8a
-cp "<SDK>/native/llvm/lib/aarch64-linux-ohos/libc++_shared.so" gen/ohos/tauri/libs/arm64-v8a/
-# 只放此目录；entry_desktop/libs/ 与 dialog/libs/ 会被构建删除
+# 5.1 注入 libc++_shared.so（缺 = 装机白屏）——放 dialog 插件【源】目录
+mkdir -p plugins/dialog/openharmony/libs/arm64-v8a
+cp "<SDK>/native/llvm/lib/aarch64-linux-ohos/libc++_shared.so" \
+   plugins/dialog/openharmony/libs/arm64-v8a/
+# 该目录在 git 树内（本仓已带，检查存在即可）；CLI 每次构建整树重拷到
+# gen/ohos/dialog，HAR 根的 libs/arm64-v8a/ 由 hvigor 自动随 HAR 打进 HAP。
+# ⚠️ 不要放 gen/ohos/tauri/libs/——fork 73bffac6f 起 tauri-build 的
+# sync_ohos_tauri_module 每次 Rust 构建把该目录镜像回模板并剪枝新文件，
+# 注入即被清（白屏）；entry_desktop/libs/ 与 gen 侧 dialog/libs/ 同样会被构建删除。
 
-# 5.2 boring-sys2 空目录（缺 = 构建 panic；target/ 清理后重建）
-mkdir -p ../../target/aarch64-unknown-linux-ohos/release/build/boring-sys2-*/out/build/crypto
-mkdir -p ../../target/aarch64-unknown-linux-ohos/release/build/boring-sys2-*/out/build/ssl
+# 5.2 boring-sys2 空目录（缺 = 构建 panic）——两步法：
+# 先跑一次 §6 构建，等 panic 报出形如
+#   .../target/aarch64-unknown-linux-ohos/release/build/boring-sys2-<hash>/out/build/crypto/
+# 的缺失路径（<hash> 每仓每版本不同，无法预知），再照报的路径补空目录后重跑：
+mkdir -p ../../target/aarch64-unknown-linux-ohos/release/build/boring-sys2-<报出的hash>/out/build/crypto
+mkdir -p ../../target/aarch64-unknown-linux-ohos/release/build/boring-sys2-<报出的hash>/out/build/ssl
+# target/ 清理后需重补（空目录即可）
 ```
 
 ## 6. 构建 HAP
@@ -86,6 +97,7 @@ cargo tauri ohos build --device-type desktop --ci -t aarch64
 - `BINDGEN_EXTRA_CLANG_ARGS` 带 `stddef.h` 报错时必查；空格路径须内层双引号；clang 版本号按 `<SDK>` 实际目录名调整
 - 产物：`gen/ohos/entry_desktop/build/default/outputs/default/entry_desktop-default-signed.hap`（未设签名变量则 `-unsigned.hap`）
 - 首次 30–60 分钟（全量编译）
+- 构建完成后可 `unzip -l <hap> | grep libc++` 复核两条 `.so` 都在（`libc++_shared.so` 1,262,504 B）
 
 ## 7. 签名与装机
 
@@ -105,20 +117,33 @@ hdc shell "aa start -a EntryAbility -b com.egui.device_spike"
 
 | 症状 | 处理 |
 |---|---|
-| 装机后白屏 | libc++ 没注入或注入点错（§5.1） |
-| 构建 panic 在 `ohrs`/canonicalize | boring-sys2 空目录（§5.2） |
+| 装机后白屏 | libc++ 没注入或注入点错（§5.1，认准 dialog 源目录） |
+| 构建 panic 在 `ohrs`/canonicalize | boring-sys2 空目录两步法（§5.2） |
 | bindgen 找不到 `stddef.h` 等 | §6 三 `-isystem` 缺失 / 空格路径没内层引号 |
 | cargo 失败找不到 dist | 前端没先构建（§3） |
 | 装机报 `9568263 version downgrade` | 单槽互斥（姊妹应用装过即触发）：`hdc shell "bm uninstall -n com.egui.device_spike"` 后重装 |
-| 装机报 `9568289 grant request permissions failed` | tauri-cli 非 git 版，重装 §1 |
+| 装机报 `9568289 grant request permissions failed` | tauri-cli 非 git 版或过旧，重装 §1 |
 | `aa start` 成功但界面没变 | 命中在跑实例；先 force-stop 再启动 |
 | 看不到 Rust 日志 | hilog 过滤 tag `RustStdoutStderr`，`grep -vE 'audio_dump\|oh_gin\|nweb_handler\|arkweb_browser'` |
+| 窗口关不掉 / 关完进程残留 | 依赖过旧（close 修复在 fork `73bffac6f` 链上）；重锁后重装 CLI 重建 |
 
 ## 9. 验证判据
 
-pid 存活、首屏深色工作台 UI（非白屏）、使用无崩溃（faultlog 无新增 cppcrash）。
-启动日志（tag `RustStdoutStderr`）依次出现：
+**启动**：pid 存活、首屏深色工作台 UI（非白屏）、使用无崩溃（faultlog 无新增 cppcrash）、
+IPC/心跳（hilog tag `RustStdoutStderr`）：
 
 | artcraft | artcraftx |
 |---|---|
-| `OHOS filesDir base:` → 数据子目录 → `scheme_handler register custom schemes tauri` → ArkWeb 引擎初始化 | `OHOS filesDir base:` → `NativeAbility onCreate` → `scheme_handler register custom schemes tauri` → `OnFirstScreenPaint` → `get_app_info_command called` |
+| `OHOS filesDir base:` → 数据子目录 → `scheme_handler register custom schemes tauri` → ArkWeb 引擎初始化 → `discord_presence_thread` 周期重连日志 | `OHOS filesDir base:` → `NativeAbility onCreate` → `scheme_handler register custom schemes tauri` → `OnFirstScreenPaint`（本机 1.5s 量级）→ `get_app_preferences_command called`（前端→Rust IPC 回环） |
+
+**关闭**（两应用主窗均为自绘标题栏——OS 无 −/□/× 按钮，Alt+F4 是标准触发）：
+
+```bash
+hdc shell "uitest uiInput keyEvent 2045 2093"   # Alt+F4（keycode 2045=AltLeft 2093=F4）
+hdc shell "pidof com.egui.device_spike"          # 期望：空（进程干净退出）
+```
+
+关闭后 2s 内 hilog 应出现退出链 `~WindowScene: winId <n> destructor!` →
+`[ARR1101] terminate EntryAbility` → `[ARM992] terminate isLast:1` →
+`[ARR1719] Application terminated`，且 faultlog 无新增 cppcrash。
+进程残留 / 窗口残留 = close 僵尸回归（依赖过旧）。
