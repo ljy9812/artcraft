@@ -1,13 +1,12 @@
 # TRY-GUIDE — artcraft / artcraftx 鸿蒙（OHOS）构建装机指南
 
-Tauri 线应用无预构建鸿蒙包，需从源码构建。两应用流程同构，差异仅 4 处：
+Tauri 线应用无预构建鸿蒙包，需从源码构建。两应用流程同构，差异仅 3 处：
 
 | | artcraft | artcraftx |
 |---|---|---|
 | clone 仓 | `ljy9812/artcraft` | `ljy9812/artcraftx` |
 | init / build 目录 | `crates/desktop/artcraft` | `crates/artcraftx` |
 | §6 bindgen 三 `-isystem` | 可省 | **必设** |
-| 首启日志判据 | §9 左 | §9 右 |
 
 > Windows 11 + DevEco Studio 5.x 验证（2026-11-09，fork `ohdev-git` @ `73bffac6f`）。
 > 技术细节见各仓根 `OHOS-TAURI.md`。artcraft 仓的 `artcraft-native/` 不在本指南范围。
@@ -126,24 +125,3 @@ hdc shell "aa start -a EntryAbility -b com.egui.device_spike"
 | `aa start` 成功但界面没变 | 命中在跑实例；先 force-stop 再启动 |
 | 看不到 Rust 日志 | hilog 过滤 tag `RustStdoutStderr`，`grep -vE 'audio_dump\|oh_gin\|nweb_handler\|arkweb_browser'` |
 | 窗口关不掉 / 关完进程残留 | 依赖过旧（close 修复在 fork `73bffac6f` 链上）；重锁后重装 CLI 重建 |
-
-## 9. 验证判据
-
-**启动**：pid 存活、首屏深色工作台 UI（非白屏）、使用无崩溃（faultlog 无新增 cppcrash）、
-IPC/心跳（hilog tag `RustStdoutStderr`）：
-
-| artcraft | artcraftx |
-|---|---|
-| `OHOS filesDir base:` → 数据子目录 → `scheme_handler register custom schemes tauri` → ArkWeb 引擎初始化 → `discord_presence_thread` 周期重连日志 | `OHOS filesDir base:` → `NativeAbility onCreate` → `scheme_handler register custom schemes tauri` → `OnFirstScreenPaint`（本机 1.5s 量级）→ `get_app_preferences_command called`（前端→Rust IPC 回环） |
-
-**关闭**（两应用主窗均为自绘标题栏——OS 无 −/□/× 按钮，Alt+F4 是标准触发）：
-
-```bash
-hdc shell "uitest uiInput keyEvent 2045 2093"   # Alt+F4（keycode 2045=AltLeft 2093=F4）
-hdc shell "pidof com.egui.device_spike"          # 期望：空（进程干净退出）
-```
-
-关闭后 2s 内 hilog 应出现退出链 `~WindowScene: winId <n> destructor!` →
-`[ARR1101] terminate EntryAbility` → `[ARM992] terminate isLast:1` →
-`[ARR1719] Application terminated`，且 faultlog 无新增 cppcrash。
-进程残留 / 窗口残留 = close 僵尸回归（依赖过旧）。
